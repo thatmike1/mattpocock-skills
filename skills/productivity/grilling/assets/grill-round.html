@@ -1,0 +1,602 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grill round</title>
+<style>
+  :root {
+    --ground: #eef0f3;
+    --surface: #ffffff;
+    --surface-sunk: #e6e9ee;
+    --line: #d3d8e0;
+    --line-soft: #e2e6ec;
+    --text: #171a20;
+    --text-dim: #5e6874;
+    --accent: #2e6c8e;
+    --accent-soft: #dce9f1;
+    --accent-text: #1f5673;
+    --ember: #b8552c;
+    --ember-soft: #f6e3d9;
+    --radius: 10px;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "DejaVu Sans Mono", Menlo, monospace;
+    --sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #14171c;
+      --surface: #1c2027;
+      --surface-sunk: #101318;
+      --line: #2e343e;
+      --line-soft: #262b33;
+      --text: #e7eaef;
+      --text-dim: #97a1af;
+      --accent: #6cabcc;
+      --accent-soft: #1d3341;
+      --accent-text: #a8cee3;
+      --ember: #e08b5f;
+      --ember-soft: #3a2519;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #14171c;
+    --surface: #1c2027;
+    --surface-sunk: #101318;
+    --line: #2e343e;
+    --line-soft: #262b33;
+    --text: #e7eaef;
+    --text-dim: #97a1af;
+    --accent: #6cabcc;
+    --accent-soft: #1d3341;
+    --accent-text: #a8cee3;
+    --ember: #e08b5f;
+    --ember-soft: #3a2519;
+  }
+
+  * { box-sizing: border-box; }
+
+  /* everything below is sized in rem, so this is the one zoom dial */
+  html { font-size: 115%; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 14rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  /* ---------- header ---------- */
+
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    line-height: 1.2;
+    font-weight: 620;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  .lede {
+    margin: 0;
+    color: var(--text-dim);
+    max-width: 62ch;
+  }
+
+  .pending {
+    display: flex;
+    gap: 0.6rem;
+    align-items: baseline;
+    padding: 0.7rem 0.9rem;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+
+  .pending b { color: var(--text); font-weight: 600; }
+
+  /* ---------- question card ---------- */
+
+  .q {
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.15rem 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .q-head {
+    display: flex;
+    gap: 0.7rem;
+    align-items: baseline;
+  }
+
+  .q-num {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent-text);
+    background: var(--accent-soft);
+    border-radius: 5px;
+    padding: 0.1rem 0.42rem;
+    flex: none;
+  }
+
+  .q-title {
+    margin: 0;
+    font-size: 1.06rem;
+    font-weight: 620;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .q-body {
+    margin: 0;
+    color: var(--text-dim);
+    max-width: 66ch;
+  }
+
+  .q-body strong { color: var(--text); font-weight: 600; }
+
+  /* ---------- options ---------- */
+
+  .opts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .opt {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.65rem;
+    align-items: baseline;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    background: var(--surface-sunk);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 0.55rem 0.7rem;
+    cursor: pointer;
+    transition: background 0.12s ease, border-color 0.12s ease;
+  }
+
+  .opt:hover { border-color: var(--line); }
+
+  .opt:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .opt[aria-pressed="true"] {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+
+  .opt-code {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-dim);
+  }
+
+  .opt[aria-pressed="true"] .opt-code { color: var(--accent-text); }
+
+  .opt-label { font-size: 0.94rem; }
+
+  .opt-detail {
+    display: block;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-top: 0.1rem;
+  }
+
+  .opt-rec {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ember);
+    background: var(--ember-soft);
+    border-radius: 4px;
+    padding: 0.05rem 0.32rem;
+    margin-left: 0.4rem;
+    vertical-align: 0.08em;
+    white-space: nowrap;
+  }
+
+  /* ---------- recommendation ---------- */
+
+  .rec {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.6rem;
+    align-items: baseline;
+    border-left: 2px solid var(--ember);
+    padding: 0.15rem 0 0.15rem 0.75rem;
+    font-size: 0.92rem;
+    color: var(--text-dim);
+    max-width: 66ch;
+  }
+
+  .rec-tag {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ember);
+  }
+
+  /* ---------- answer box ---------- */
+
+  textarea {
+    width: 100%;
+    font-family: var(--mono);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--text);
+    background: var(--surface-sunk);
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+    padding: 0.6rem 0.7rem;
+    resize: vertical;
+    min-height: 3.1rem;
+  }
+
+  textarea:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: transparent;
+  }
+
+  textarea::placeholder { color: var(--text-dim); opacity: 0.75; }
+
+  /* ---------- footer ---------- */
+
+  .bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    padding: 0.8rem 1.25rem 1rem;
+  }
+
+  .bar-inner {
+    max-width: 46rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .bar-top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .count {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+    margin-right: auto;
+  }
+
+  button.action {
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 560;
+    color: #fff;
+    background: var(--accent);
+    border: 1px solid transparent;
+    border-radius: 7px;
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+  }
+
+  button.action.ghost {
+    color: var(--text-dim);
+    background: transparent;
+    border-color: var(--line);
+  }
+
+  button.action:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  #compiled { min-height: 4.4rem; max-height: 30vh; }
+
+  /* wide screens: the compiled reply becomes a full-height rail on the
+     right, so it's readable while the questions stay in their column */
+  @media (min-width: 1250px) {
+    body { padding-right: 28rem; }
+
+    .wrap { padding-bottom: 3rem; }
+
+    .bar {
+      top: 0;
+      left: auto;
+      right: 0;
+      bottom: 0;
+      width: 28rem;
+      display: flex;
+      border-top: none;
+      border-left: 1px solid var(--line);
+      padding: 1.5rem 1.5rem 1.75rem;
+    }
+
+    .bar-inner {
+      max-width: none;
+      flex: 1;
+      height: 100%;
+    }
+
+    #compiled {
+      flex: 1;
+      min-height: 0;
+      max-height: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+
+  @media (max-width: 34rem) {
+    .wrap { padding-top: 1.5rem; }
+    h1 { font-size: 1.35rem; }
+  }
+</style>
+
+<script src="round.js"></script>
+
+<script>
+  /* ============================================================
+     Engine. Everything it renders comes from round.js, which sets
+     window.GRILL = { round, questions }. Nothing here needs editing.
+     ============================================================ */
+
+  const GRILL = window.GRILL || {};
+  const ROUND = GRILL.round || {};
+  const QUESTIONS = GRILL.questions || [];
+
+  const state = QUESTIONS.map(() => ({ code: null, text: "" }));
+
+  /** keep an answer box tall enough to show everything typed in it */
+  const grow = (ta) => {
+    ta.style.height = "auto";
+    ta.style.height = `${ta.scrollHeight}px`;
+  };
+
+  const esc = (s) =>
+    String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  function render() {
+    const wrap = document.createElement("div");
+    wrap.className = "wrap";
+
+    if (!QUESTIONS.length) {
+      wrap.innerHTML =
+        `<header><div class="eyebrow">Grill</div><h1>No round loaded</h1>` +
+        `<p class="lede">This page reads its questions from <code>round.js</code> in the same folder. ` +
+        `Copy <code>round.example.js</code> to <code>round.js</code> and fill it in.</p></header>`;
+      document.body.append(wrap);
+      return;
+    }
+
+    const head = document.createElement("header");
+    head.innerHTML =
+      `<div class="eyebrow">${esc(ROUND.eyebrow || "Grill")}</div>` +
+      `<h1>${esc(ROUND.title || "Round")}</h1>` +
+      (ROUND.lede ? `<p class="lede">${esc(ROUND.lede)}</p>` : "");
+    wrap.append(head);
+
+    if (ROUND.pending) {
+      const p = document.createElement("div");
+      p.className = "pending";
+      p.innerHTML = `<b>Still fetching</b><span>${esc(ROUND.pending)}</span>`;
+      wrap.append(p);
+    }
+
+    QUESTIONS.forEach((q, i) => {
+      const card = document.createElement("section");
+      card.className = "q";
+
+      const head = document.createElement("div");
+      head.className = "q-head";
+      head.innerHTML = `<span class="q-num">Q${i + 1}</span><h2 class="q-title">${esc(q.title)}</h2>`;
+      card.append(head);
+
+      if (q.body) {
+        const body = document.createElement("p");
+        body.className = "q-body";
+        body.textContent = q.body;
+        card.append(body);
+      }
+
+      const opts = document.createElement("div");
+      opts.className = "opts";
+      q.options.forEach((o) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "opt";
+        btn.setAttribute("aria-pressed", "false");
+        btn.dataset.code = o.code;
+        const rec = q.recommend && q.recommend.code === o.code
+          ? `<span class="opt-rec">recommended</span>` : "";
+        btn.innerHTML =
+          `<span class="opt-code">${esc(o.code)}</span>` +
+          `<span><span class="opt-label">${esc(o.label)}</span>${rec}` +
+          (o.detail ? `<span class="opt-detail">${esc(o.detail)}</span>` : "") +
+          `</span>`;
+        btn.addEventListener("click", () => choose(i, o.code));
+        opts.append(btn);
+      });
+      card.append(opts);
+
+      if (q.recommend && q.recommend.why) {
+        const rec = document.createElement("div");
+        rec.className = "rec";
+        rec.innerHTML =
+          `<span class="rec-tag">why ${esc(q.recommend.code)}</span>` +
+          `<span>${esc(q.recommend.why)}</span>`;
+        card.append(rec);
+      }
+
+      const ta = document.createElement("textarea");
+      ta.rows = 2;
+      ta.id = `answer-${i}`;
+      ta.setAttribute("aria-label", `Answer to question ${i + 1}`);
+      ta.placeholder = "Pick an option above, or just write what you think.";
+      ta.addEventListener("input", () => {
+        state[i].text = ta.value;
+        grow(ta);
+        syncSelection(i);
+        compile();
+      });
+      card.append(ta);
+
+      wrap.append(card);
+    });
+
+    document.body.append(wrap, buildBar());
+    compile();
+  }
+
+  function buildBar() {
+    const bar = document.createElement("div");
+    bar.className = "bar";
+    bar.innerHTML =
+      `<div class="bar-inner">` +
+      `<div class="bar-top">` +
+      `<span class="count" id="count"></span>` +
+      `<button type="button" class="action ghost" id="clear">Clear</button>` +
+      `<button type="button" class="action" id="copy">Copy reply</button>` +
+      `</div>` +
+      `<textarea id="compiled" readonly aria-label="Compiled reply"></textarea>` +
+      `</div>`;
+    bar.querySelector("#copy").addEventListener("click", copyReply);
+    bar.querySelector("#clear").addEventListener("click", clearAll);
+    return bar;
+  }
+
+  /**
+   * insert an option code at the head of the answer box, replacing any
+   * code inserted earlier while leaving the user's own prose intact.
+   */
+  function choose(i, code) {
+    const ta = document.getElementById(`answer-${i}`);
+    const rest = ta.value.replace(/^\s*[A-Za-z0-9]+\s+—\s+/, "");
+    const same = state[i].code === code;
+    state[i].code = same ? null : code;
+    ta.value = same ? rest : `${code} — ${rest}`;
+    state[i].text = ta.value;
+    grow(ta);
+    ta.focus();
+    const pos = same ? 0 : ta.value.length;
+    ta.setSelectionRange(pos, pos);
+    syncSelection(i);
+    compile();
+  }
+
+  /** keep the pressed button in step with whatever the box actually starts with */
+  function syncSelection(i) {
+    const m = state[i].text.match(/^\s*([A-Za-z0-9]+)\s+—\s+/);
+    state[i].code = m ? m[1] : null;
+    document
+      .getElementById(`answer-${i}`)
+      .closest(".q")
+      .querySelectorAll(".opt")
+      .forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.code === state[i].code)));
+  }
+
+  function compile() {
+    const lines = [];
+    let answered = 0;
+    state.forEach((s, i) => {
+      const text = s.text.trim();
+      if (!text) return;
+      answered++;
+      lines.push(`Q${i + 1} (${QUESTIONS[i].title}): ${text}`);
+    });
+    document.getElementById("compiled").value = lines.join("\n\n");
+    document.getElementById("count").textContent =
+      `${answered} / ${QUESTIONS.length} answered`;
+  }
+
+  function copyReply() {
+    const out = document.getElementById("compiled");
+    const btn = document.getElementById("copy");
+    const done = (ok) => {
+      btn.textContent = ok ? "Copied" : "Select it and copy";
+      setTimeout(() => (btn.textContent = "Copy reply"), 1800);
+    };
+    /* file:// is not a secure context, so the async clipboard API is
+       unavailable there — fall back to execCommand, then to a selection. */
+    const legacy = () => {
+      out.select();
+      let ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      done(ok);
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(out.value).then(() => done(true), legacy);
+    } else {
+      legacy();
+    }
+  }
+
+  function clearAll() {
+    state.forEach((s, i) => {
+      s.code = null;
+      s.text = "";
+      const ta = document.getElementById(`answer-${i}`);
+      ta.value = "";
+      grow(ta);
+      syncSelection(i);
+    });
+    compile();
+  }
+
+  /* the scripts sit in the document head, so body may not exist yet */
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", render);
+  } else {
+    render();
+  }
+</script>
