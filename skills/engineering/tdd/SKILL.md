@@ -36,3 +36,21 @@ When the shape of that interface is itself in question (how deep the module is, 
 - **Red before green.** Write the failing test first, then only enough code to pass it. Don't anticipate future tests or add speculative features.
 - **One slice at a time.** One seam, one test, one minimal implementation per cycle.
 - **Refactoring is not part of the loop.** It belongs to the review stage (see the `code-review` skill), not the red → green implementation cycle.
+
+## When a failing test is impractical
+
+Do not silently skip the regression step. Before fixing, say why a failing test is impossible or not worth the cost, then choose the closest executable regression check available: a targeted script, a manual reproduction command, browser automation via the `agent-browser` skill, a snapshot comparison, a log assertion, or a focused integration check.
+
+**Prefer no new test over a bad test.** A bad test is one that mostly tests mocks, encodes current implementation details, depends on timing or unrelated global state, needs expensive infrastructure for a small fix, or would be deleted immediately after proving the fix.
+
+Two things this does not license. Never weaken an existing assertion to accommodate a wrong implementation — if the expected behavior genuinely changed, say so and why. And if the bug is flaky, make the check deterministic where you can, and name the signal being locked down.
+
+## Reporting the evidence
+
+Report what ran, not just the outcome:
+
+- The failing-before test or executable check, and the failure it produced.
+- The passing-after run, and any nearby validation performed.
+- If failing-before evidence could not be demonstrated, why, and which regression check stood in for it.
+
+"Should work now" is not a report. Neither is a green suite that never went red.
