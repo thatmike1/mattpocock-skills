@@ -159,7 +159,7 @@ You may use one of these, you may use several, it is unlikely you will use all o
 
 Concrete evidence that the change works. Show a before and after.
 
-Screenshots are S-tier - when the environment is set up for it and the change is visual. Embed them in the body as images. Screenshots committed to the repo still go in inline, linked at a fixed commit (`https://github.com/<owner>/<repo>/blob/<sha>/<path>?raw=true`); naming the folder they live in is not evidence a reviewer will see.
+Screenshots are S-tier - when the environment is set up for it and the change is visual. Embed them in the body as images. Screenshots committed to the repo still go in inline, linked at a fixed commit (`https://github.com/<owner>/<repo>/blob/<sha>/<path>?raw=true`); naming the folder they live in is not evidence a reviewer will see. Many screenshots (more than four or so) go in one place, never one comment each: a collapsed `<details>` per area, holding a table with one row per view and thumbnails (`<a href=FULL><img src=FULL width=...>`) sized so a row fits a normal screen. A comparison shows its two images side by side, not stacked.
 
 Execution-based evidence is A-tier. Test results, console output. Show the exact test that now fails and passes, using pseudocode.
 
